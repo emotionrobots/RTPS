@@ -7,12 +7,13 @@ COMMON_DIR = src/rtps_common
 
 CC = gcc
 AR = ar rcs
-CFLAGS = -Wall -Wextra -O2 -I. -I$(INC_DIR)
-LDFLAGS = -lm -lc -lcjson -lSDL2 -lSDL2_gfx
+CFLAGS = -Wall -Wno-sign-compare -Wextra -O2 -I. -I$(INC_DIR)
+LDFLAGS = 
+LIBS = -lm -lc -lcjson -lSDL2 -lSDL2_gfx
 
 
 # Source files for libraries
-COMMON_LIB_SRCS = $(COMMON_DIR)/rtps_common.c
+COMMON_LIB_SRCS = $(COMMON_DIR)/rtps_common.c $(COMMON_DIR)/circular_buffer.c
 
 
 # Static library targets
@@ -40,7 +41,7 @@ SERVER_BIN_OBJS = $(SERVER_BIN_SRCS:.c=.o)
 
 # All targets
 .PHONY: all clean
-all: $(CLIENT_LIB) $(CLIENT_BIN) $(SERVER_BIN)
+all: $(COMMON_LIB) $(CLIENT_BIN) $(SERVER_BIN)
 
 
 # Build static libraries
@@ -50,10 +51,10 @@ $(COMMON_LIB): $(COMMON_LIB_OBJS)
 
 # Build binaries
 $(CLIENT_BIN): $(CLIENT_BIN_OBJS) $(COMMON_LIB)
-	$(CC) -o $@ $(CLIENT_BIN_OBJS) $(COMMON_LIB) $(LDFLAGS)
+	$(CC) -o $@ $(CLIENT_BIN_OBJS) $(COMMON_LIB) $(LIBS)
 
 $(SERVER_BIN): $(SERVER_BIN_OBJS) $(COMMON_LIB)
-	$(CC) -o $@ $(SERVER_BIN_OBJS) $(COMMON_LIB) $(LDFLAGS)
+	$(CC) -o $@ $(SERVER_BIN_OBJS) $(COMMON_LIB) $(LIBS)
 
 
 # Compile source files to object files
