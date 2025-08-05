@@ -61,13 +61,14 @@ static int cb_next_tail(CircularBuffer *cb, int tail)
 //-------------------------------------------------------------------------
 bool cb_push(CircularBuffer *cb, DATA_TYPE item) 
 {
-    bool rc = cb_full(cb);
+    bool is_full = cb_full(cb);
 
     cb->buffer[cb->head] = item;
     cb->head = cb_next_head(cb, cb->head);
-    cb->count = cb->count+1;
+    if (!is_full) 
+       cb->count = cb->count+1;
    
-    return rc;
+    return is_full;
 }
 
 

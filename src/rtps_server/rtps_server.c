@@ -167,7 +167,7 @@ int draw_plot(RTPS_Window *window, double x_offset)
     tail = cb_peek_tail(&window->cb, tail, &data1);
     if (tail < 0) return -3;
 
-    for (int i = 1; i < window->cb.count; ++i)
+    for (int i = 1; i < window->cb.count; i++)
     {
        tail = cb_peek_tail(&window->cb, tail, &data2);
 
@@ -417,7 +417,6 @@ int RTPS_plot(cJSON *root, RTPS_Window *window)
    if (rc != 0) printf("draw_plot returned rc=%d\n", rc);
    draw_title(window);
 
-#if 1
    // Axis labels
    stringRGBA(window->sdlrendr,
               window->width/2 - 30, window->height - 35, 
@@ -428,7 +427,6 @@ int RTPS_plot(cJSON *root, RTPS_Window *window)
 	      10, window->height/2,
 	      window->y_label, 
 	      0, 0, 0, 255);
-#endif
 
    SDL_RenderPresent(window->sdlrendr);
    SDL_Delay((int)window->x_step*1000);
@@ -534,7 +532,7 @@ int main(int argc, char *argv[])
       memset(message, 0, sizeof(message));
       if (0 == RTPS_recv(client,  message, sizeof(message)))
       {
-         printf("Processed message: %s\n", message);
+         //printf("Processed message: %s\n", message);
 
          // Parse JSON string 
          if ((root = cJSON_Parse(message)) == NULL) return -1;
@@ -567,7 +565,6 @@ int main(int argc, char *argv[])
                if (win_created)
 	       {
                   rc = RTPS_plot(root, &plotwin);
-                  printf("RTPS_plot() returned rc=%d\n", rc);
 	       }
 	       else
 	       {
@@ -586,12 +583,6 @@ int main(int argc, char *argv[])
                rc = -5;
 	       goto _err_ret;
             }
-	 }
-	 else
-	 {
-            RTPS_perror("No cmd found.");
-            rc = -6;
-	    goto _err_ret;
 	 }
       } // if (recv)
    } // while (connected)

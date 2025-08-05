@@ -114,7 +114,7 @@ int RTPS_cjson_to_win(cJSON *root, RTPS_Window *win)
 
    cJSON_ArrayForEach(color, ycolor)
    {   
-      cJSON *r, *g, *b;
+      cJSON *r, *g, *b, *a;
       if (k >= MAX_Y_PLOTS) break;
 
       if ((r = cJSON_extract(color, 'n', "r")) != NULL)
@@ -125,6 +125,9 @@ int RTPS_cjson_to_win(cJSON *root, RTPS_Window *win)
 
       if ((b = cJSON_extract(color, 'n', "b")) != NULL)
          win->y_color[k].b = b->valueint;
+
+      if ((a = cJSON_extract(color, 'n', "a")) != NULL)
+         win->y_color[k].a = a->valueint;
 
       k++;
    }
@@ -209,7 +212,7 @@ int RTPS_cjson_to_data(cJSON *root, DataPoint *dat)
       if (k == 0)
          dat->x = y->valuedouble;
       else
-         dat->y[k] = y->valuedouble;
+         dat->y[k-1] = y->valuedouble;
       k++;
    }
 

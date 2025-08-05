@@ -82,12 +82,12 @@ int main()
     DataPoint data = {0};
     double t = 0;
     double h = plotwin.x_step;
-    double freq = 1.0;
+    double freq = 0.5;
     while (!done) 
     {
-       data.x = t;
        for (int i=0; i < plotwin.y_count; i++)
-          data.y[i] = 2.0 -(0.2*i)* cos(2.0*M_PI*freq*data.x);
+          data.y[i] = (2.0 - 0.3*i) * cos(2.0*M_PI*freq*t);
+       data.x = t;
        t += h;
 
        cJSON *cdata = cJSON_CreateObject();
