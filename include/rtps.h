@@ -28,6 +28,7 @@ typedef struct {
    int fd;
    int socket;
    int port;
+   int client;
    bool connected;
    struct sockaddr_in address;
 }
@@ -63,77 +64,6 @@ typedef struct {
 RTPS_Window;
 
 
-/*!
- *---------------------------------------------------------------------------------------
- *
- *  @fn         int RTPS_cjson_to_win(cJSON *root, RTPS_Window *win)
- *
- *  @brief      Convert cJSON to RTPS_Window object
- *
- *  @param      root            JSON root
- *  @param      win             Instantiated RTPS_Window object
- *
- *  @return     0 if successful; negative otherwise
- *
- *---------------------------------------------------------------------------------------
- */
-int RTPS_cjson_to_win(cJSON *root, RTPS_Window *win);
-
-/*!
- *---------------------------------------------------------------------------------------
- *
- *  @fn         int RTPS_win_to_cjson(RTPS_Window *win, cJSON *root)
- *
- *  @brief      Converting RTPS_Window object to cJSON object
- *   
- *  @param      root            JSON root
- *  @param      win             Instantiated RTPS_Window object
- *
- *  @return     0 if successful; negative otherwise
- *
- *---------------------------------------------------------------------------------------
- */
-int RTPS_win_to_cjson(RTPS_Window *win, cJSON *root);
-
-
-
-/*!
- *---------------------------------------------------------------------------------------
- *
- *  @fn         int RTPS_cjson_to_data(cJSON *root, DataPoint *data)
- *
- *  @brief      Extract cJSON into DataPoint object
- *
- *  @param      root            root cJSON
- *  @param      data            DataPoint pointer
- *
- *  @return     0 if success; negative otherwise
- *
- *---------------------------------------------------------------------------------------
- */
-int RTPS_cjson_to_data(cJSON *root, DataPoint *dat);
-
-
-
-/*!
- *---------------------------------------------------------------------------------------
- *
- *  @fn         int RTPS_data_to_cjson(DataPoint *dat, cJSON *root, int sz)
- *
- *  @brief      Convert DataPoint to equivalent cJSON
- *
- *  @param      dat     Pointer to the DataPoint object
- *  @param      root    Pointer to already-created cJSON object
- *  @param      win     RTPS_Window instance pointer 
- *
- *  @return     0 if successful; negative otherwise
- *
- *---------------------------------------------------------------------------------------
- */
-int RTPS_data_to_cjson(DataPoint *dat, cJSON *root, RTPS_Window *win);
-
-
-
 
 /*!
  *---------------------------------------------------------------------------------------
@@ -147,17 +77,18 @@ int RTPS_data_to_cjson(DataPoint *dat, cJSON *root, RTPS_Window *win);
 void RTPS_perror(char *msg);
 
 
-
 /*!
  *---------------------------------------------------------------------------------------
  *
- *  @fn         int RTPS_is_all_digits(const char *str)
+ *  @fn         int RTPS_is_all_digits(const char *str) 
  *
  *  @brief       Returns 1 if str is made only of digits, 0 otherwise
  *
  *---------------------------------------------------------------------------------------
  */
 int RTPS_is_all_digits(const char *str);
+
+
 
 
 /*!
@@ -193,19 +124,138 @@ void RTPS_disconnect(RTPS_Connection *conn);
 /*!
  *---------------------------------------------------------------------------------------
  *
- *  @fn         int RTPS_send(RTPS_Connection *conn, char *message, size_t sz)
+ *  @fn         int RTPS_client_send(RTPS_Connection *conn, 
+ *                                   RTPS_Window *win, 
+ *                                   DataPoint *data)
  *
- *  @brief      Send a message of sz bytes
+ *  @brief      Send a DataPoint 
  *
  *  @param      conn            RTPS_Connection
- *  @param      message         Message string
- *  @param      sz              Size of the message
+ *  @param      win             Pointer to RTPS_Window 
+ *  @param      data            Pointer to DataPoint
  *
  *  @return     0 if successful; negative otherwise
  *
  *---------------------------------------------------------------------------------------
  */
-int RTPS_send(RTPS_Connection *conn, char *message, size_t sz);
+int RTPS_client_send(RTPS_Connection *conn, RTPS_Window *win, DataPoint *data);
+
+
+
+/*!
+ *---------------------------------------------------------------------------------------
+ *
+ *  @fn         int RTPS_client_create_plot(RTPS_Connection *conn, RTPS_Window *plot)
+ *  
+ *  @brief      Initialize plot
+ *
+ *  @param      conn            Instantiated RTPS_Connection pointer
+ *  @param      plot            Instantiated RTPS_Window pointer
+ *
+ *  @return     0 if success; negative otherwise
+ *
+ *---------------------------------------------------------------------------------------
+ */
+int RTPS_client_create_plot(RTPS_Connection *conn, RTPS_Window *plot);
+
+
+
+/*!
+ *---------------------------------------------------------------------------------------
+ *
+ *  @fn         int RTPS_server_create(cJSON *root, RTPS_Window *window)
+ *
+ *  @brief      Create a new plot window from JSON
+ *
+ *  @param      root    cJSON root
+ *  @param      window  Pointer to instantiated RTPS_Window
+ *
+ *  @return     0 if successful; negative otherwise
+ *
+ *---------------------------------------------------------------------------------------
+ */
+int RTPS_server_create(cJSON *root, RTPS_Window *window);
+
+
+
+/*!
+ *---------------------------------------------------------------------------------------
+ *
+ *  @fn         void RTPS_server_init()
+ *
+ *  @brief      Initialize RTPS server
+ *
+ *---------------------------------------------------------------------------------------
+ */
+void RTPS_server_init();
+
+
+
+/*!
+ *---------------------------------------------------------------------------------------
+ *
+ *  @fn         int RTPS_server_shutdown(RTPS_Window *win)
+ *
+ *  @brief      RTPS server shutdown
+ *
+ *  @param      win     RTPS_Window pointer
+ *
+ *  @return     0 if successful; negative otherwise
+ *
+ *---------------------------------------------------------------------------------------
+ */
+int RTPS_server_shutdown(RTPS_Window *win);
+
+
+/*!
+ *---------------------------------------------------------------------------------------
+ *
+ *  @fn         bool RTPS_server_forced_exit()
+ *
+ *  @return     true if forced exit
+ *
+ *---------------------------------------------------------------------------------------
+ */
+bool RTPS_server_forced_exit();
+
+
+
+/*!
+ *---------------------------------------------------------------------------------------
+ *
+ *  @fn         int RTPS_wait_for_connection(RTPS_Connection *conn, int port)
+ *
+ *  @brief      Initialize Real-Time Plot Server
+ *
+ *  @param      conn    Pointer to instantiated RTPS_Connection
+ *  @param      port    TCP port number
+ *
+ *  @return     0 if success; negative otherwise
+ *
+ *---------------------------------------------------------------------------------------
+ */
+int RTPS_wait_for_connection(RTPS_Connection *conn, int port);
+
+
+
+/*!
+ *---------------------------------------------------------------------------------------
+ *
+ *  @fn         int RTPS_server_update(RTPS_Connection *conn, RTPS_Window *win)
+ *
+ *  @brief      RTPS server loop update
+ *
+ *  @param      conn    RTPS_Connection pointer
+ *  @param      win     RTPS_Window pointer
+ *
+ *  @return     0 if successful; negative otherwise
+ *
+ *---------------------------------------------------------------------------------------
+ */
+int RTPS_server_update(RTPS_Connection *conn, RTPS_Window *win);
+
+
+
 
 
 

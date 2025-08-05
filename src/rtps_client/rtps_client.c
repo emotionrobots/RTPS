@@ -22,6 +22,12 @@
 
 char message[1024] = {0};
 
+
+/*!
+ *---------------------------------------------------------------------------------------
+ *  Main logic
+ *---------------------------------------------------------------------------------------
+ */
 int main() 
 {
     RTPS_Window plotwin = {0};
@@ -56,18 +62,6 @@ int main()
     plotwin.y_color[2].a = 255;
 
 
-    cJSON *root = cJSON_CreateObject();
-    if (RTPS_win_to_cjson(&plotwin, root) < 0)
-    {
-       RTPS_perror("RTPS_win_to_cjson failed.");
-       return -1;
-    }
-
-    memset(message, 0, sizeof(message));
-    strcpy(message, cJSON_Print(root));
-    printf("JSON string:\n");
-    printf("%s\n", message);
-
     // Create socket
     RTPS_Connection *conn = RTPS_connect(SERVER_IP, PORT);
     if (conn == NULL)
@@ -75,7 +69,12 @@ int main()
        RTPS_perror("Client cannot connect to server.");
        return -2;
     }
-    int rc = RTPS_send(conn, message, strlen(message));
+
+    if (RTPS_client_create_plot(conn, &plotwin) < 0)
+    {
+       RTPS_perror("Client cannot connect to server.");
+       return -3;
+    }
 
     // Send messages
     bool done = false;
@@ -90,22 +89,13 @@ int main()
        data.x = t;
        t += h;
 
-       cJSON *cdata = cJSON_CreateObject();
-       if (0 == RTPS_data_to_cjson(&data, cdata, &plotwin))
-       { 
-          memset(message, 0, sizeof(message));
-          strcpy(message, cJSON_Print(cdata));
-          if (0 == RTPS_send(conn, message, strlen(message))) 
-	  {
-             // printf("Message sent:%s", message);
-	     // if (t > plotwin.x_range)
-             //   done = true;
-	     usleep((int)(1000000*plotwin.x_step));
-          }
-       }
+       if (RTPS_client_send(conn, &plotwin, &data) < 0)
+          RTPS_perror("RTPS_send() failed"); 
+
+       usleep((int)(1000000*plotwin.x_step));
     }
 
     RTPS_disconnect(conn);
-    return rc;
+    return 0;
 }
  

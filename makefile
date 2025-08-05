@@ -7,7 +7,7 @@ COMMON_DIR = src/rtps_common
 
 CC = gcc
 AR = ar rcs
-CFLAGS = -Wall -Wno-sign-compare -Wextra -O2 -I. -I$(INC_DIR)
+CFLAGS = -Wall -Wno-unused-parameter -Wno-sign-compare -Wextra -O2 -I. -I$(INC_DIR)
 LDFLAGS = 
 LIBS = -lm -lc -lcjson -lSDL2 -lSDL2_gfx
 
