@@ -36,11 +36,12 @@ int main()
     strcpy(plotwin.x_label, "t (sec)");
     strcpy(plotwin.y_label, "y");
     plotwin.width = 800;
-    plotwin.height = 600;
+    plotwin.height = 400;
     plotwin.y_count = 3;
-    plotwin.max_points = 1024;
-    plotwin.x_step = 0.01;
-    plotwin.x_range = plotwin.x_step * (plotwin.max_points+1);
+    plotwin.max_points = 1000;
+    plotwin.x_step = 0.1;
+    // plotwin.x_range = plotwin.x_step * (plotwin.max_points+1);
+    plotwin.x_range = 10.0;
     plotwin.y_min = -2.0;
     plotwin.y_max =  2.0;
     plotwin.x_grid_step = 1.0;

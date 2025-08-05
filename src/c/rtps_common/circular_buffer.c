@@ -11,7 +11,7 @@
 void cb_init(CircularBuffer *cb, size_t y_count, size_t sz) 
 {
     cb->buffer = malloc(sizeof(DATA_TYPE) * (sz+2));
-    cb->sz = sz+2;
+    cb->sz = sz;
     cb->count = 0;
     cb->y_count = y_count;
     cb->head = 0;

@@ -1,9 +1,9 @@
 BIN_DIR = bin
 LIB_DIR = lib
 INC_DIR = include 
-CLIENT_DIR = src/rtps_client
-SERVER_DIR = src/rtps_server
-COMMON_DIR = src/rtps_common
+CLIENT_DIR = src/c/rtps_client
+SERVER_DIR = src/c/rtps_server
+COMMON_DIR = src/c/rtps_common
 
 CC = gcc
 AR = ar rcs

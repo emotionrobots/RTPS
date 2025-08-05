@@ -846,8 +846,7 @@ int RTPS_plot(cJSON *root, RTPS_Window *window)
 
    draw_grid(window, x_offset);
    draw_axes(window, x_offset);
-   rc = draw_plot(window, x_offset);
-   if (rc != 0) printf("draw_plot returned rc=%d\n", rc);
+   draw_plot(window, x_offset);
    draw_title(window);
 
    // Axis labels
